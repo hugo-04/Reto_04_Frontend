@@ -6,7 +6,7 @@ Aplicación web para gestionar clientes y consultar indicadores de natalidad. Co
 ## Funcionalidades
 
 - **Clientes**: listado en tabla con filtro de búsqueda por DNI y/o email.
-- **Nuevo cliente**: formulario con validaciones (mismas reglas que el backend) y mensajes de error del servidor.
+- **Nuevo cliente**: formulario con validaciones y mensajes de error del servidor.
 - **Indicadores**: total de clientes, mes/año con más y menos nacimientos, gráfico de barras y tabla con la tasa de natalidad.
 
 ## Tecnologías
@@ -23,7 +23,7 @@ Aplicación web para gestionar clientes y consultar indicadores de natalidad. Co
 ## Estructura
 
 ```
-frontend/
+.
 ├── index.html
 ├── vite.config.ts
 ├── .env.example
@@ -59,7 +59,6 @@ El backend permite por defecto peticiones CORS desde `http://localhost:5173`, qu
 ### 2. Configurar variables de entorno
 
 ```bash
-cd frontend
 cp .env.example .env          # Windows PowerShell: Copy-Item .env.example .env
 ```
 
@@ -85,6 +84,19 @@ npm run build
 npm run preview
 ```
 
+## Validaciones
+
+Se validan en el navegador antes de llamar al backend, con las mismas reglas del API.
+
+| Campo | Creación | Filtro de búsqueda |
+|---|---|---|
+| DNI | Obligatorio, exactamente 8 dígitos | Opcional; si se informa, exactamente 8 dígitos |
+| Email | Obligatorio, formato válido, máximo 150 caracteres | Opcional; si se informa, formato válido |
+| Nombre / Apellido | Obligatorios, solo letras, máximo 100 caracteres | — |
+| Fecha de nacimiento | Obligatoria y anterior a hoy | — |
+
+El campo DNI solo acepta dígitos al escribir. El email se envía sin espacios y en minúsculas.
+
 ## Pruebas unitarias
 
 ```bash
@@ -93,7 +105,8 @@ npm test
 
 | Archivo | Qué valida |
 |---|---|
-| `features/customers/utils/validation.test.ts` | Reglas de validación del formulario (obligatorios, DNI, email, fecha) |
+| `features/customers/utils/validation.test.ts` | Reglas de validación de creación y filtro (obligatorios, DNI, email, nombres, fecha) |
+| `features/customers/components/CustomerSearch.test.tsx` | Filtro: DNI solo dígitos, errores de DNI/email, búsqueda y limpieza |
 | `api/customersApi.test.ts` | Construcción de la URL de búsqueda y manejo de errores del backend |
 | `features/customers/components/CustomerForm.test.tsx` | Formulario: errores de validación, envío exitoso y error del servidor |
 

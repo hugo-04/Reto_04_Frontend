@@ -5,7 +5,15 @@ import { Input } from '../../../components/ui/Input';
 import type { Customer, CustomerRequest } from '../../../types/customer';
 import { today } from '../../../utils/date';
 import { useCreateCustomer } from '../hooks/useCreateCustomer';
-import { normalizeCustomer, validateCustomer, type CustomerFormErrors } from '../utils/validation';
+import {
+  DNI_LENGTH,
+  EMAIL_MAX_LENGTH,
+  NAME_MAX_LENGTH,
+  normalizeCustomer,
+  onlyDigits,
+  validateCustomer,
+  type CustomerFormErrors,
+} from '../utils/validation';
 
 const EMPTY_FORM: CustomerRequest = { firstName: '', lastName: '', email: '', dni: '', birthDate: '' };
 
@@ -20,7 +28,8 @@ export function CustomerForm({ onCreated }: CustomerFormProps) {
   const { create, saving, error } = useCreateCustomer();
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
+    const { name } = event.target;
+    const value = name === 'dni' ? onlyDigits(event.target.value) : event.target.value;
     setForm((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
@@ -44,10 +53,10 @@ export function CustomerForm({ onCreated }: CustomerFormProps) {
   return (
     <>
       <form onSubmit={handleSubmit} noValidate className="grid gap-4 sm:grid-cols-2">
-        <Input label="Nombre" name="firstName" value={form.firstName} onChange={handleChange} error={errors.firstName} maxLength={100} />
-        <Input label="Apellido" name="lastName" value={form.lastName} onChange={handleChange} error={errors.lastName} maxLength={100} />
-        <Input label="Email" name="email" type="email" value={form.email} onChange={handleChange} error={errors.email} maxLength={150} />
-        <Input label="DNI" name="dni" inputMode="numeric" value={form.dni} onChange={handleChange} error={errors.dni} maxLength={8} />
+        <Input label="Nombre" name="firstName" value={form.firstName} onChange={handleChange} error={errors.firstName} maxLength={NAME_MAX_LENGTH} />
+        <Input label="Apellido" name="lastName" value={form.lastName} onChange={handleChange} error={errors.lastName} maxLength={NAME_MAX_LENGTH} />
+        <Input label="Email" name="email" type="email" value={form.email} onChange={handleChange} error={errors.email} maxLength={EMAIL_MAX_LENGTH} />
+        <Input label="DNI" name="dni" inputMode="numeric" value={form.dni} onChange={handleChange} error={errors.dni} maxLength={DNI_LENGTH} />
         <Input
           label="Fecha de nacimiento"
           name="birthDate"
